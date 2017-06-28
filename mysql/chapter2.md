@@ -15,13 +15,13 @@ How does MySQL store processed JSON document? In order to provide high performan
 
 JSON document in MySQL is serialized into binary string in disk and deserialized into JSON DOM object in memory. The binary format is shown as below diagram:
 
-![below diagram](/assets/mysql_json.png)
+![below diagram](/resources/mysql_json.png)
 
 That's to say one JSON document is stored as a binary string that composed with JSON type identifier and JSON document values:  **JSON = type + value**. Type identifier is used to identify which type of the JSON document is stored. As per the [Spec of JSON](http://json.org/) there are two forms of complicated JSON value, object and array:
 
-![object](/assets/object.gif)
+![object](/resources/object.gif)
 
-![array](/assets/array.gif)
+![array](/resources/array.gif)
 
 
 
@@ -121,7 +121,7 @@ Each filed of a JSON value has a fixed position in a serialized binary string, t
 
 **value = "count:size:KE1:KE2:…KEn:VE1:VE2:…:VEn:k1:K2:…kn:V1:V2:…:Vn"** 
 
-![object](/assets/object.png)
+![object](/resources/object.png)
 
 * *type identifier* 0x00(small json object ) or 0x01 (large json object)
 * *count* identifies the number of elements in JSON document. Its type is either of uint16 or uint32 for small and large document
@@ -221,7 +221,7 @@ serialize_json_value(const Json_dom *dom, size_t type_pos, String *dest, size_t 
 ```
 
 Below diagram only shows the main process of JSON object serialization, *line 48 ~ line 68*.
-![flow](/assets/flow.png)
+![flow](/resources/flow.png)
 
 1. down cast *dom* object from *json_dom* to *json_object*
 
@@ -461,7 +461,7 @@ JSON array serialzied into string as below diagram. Its structure is simple than
 
 
 
-![array](/assets/array.png)
+![array](/resources/array.png)
 
 The serialization of JSON array is similar as JSON object. I will not go into depth of JSON array. 
 
@@ -556,14 +556,14 @@ In the real world blagging is always far more than donating, and this principle 
 MySQL implement deserialization skillfully by introducing *Json_dom* representation and based on it building up series of convinent JSON manipulation functions. Besides *Json_dom* another class *Value* is declared in namespace of *json_binary* to store preparsed data from column of JSON. Let's take a look at how to deserialize a persisted JSON document in MySQL.
 
 *Json_dom* the base class to represent one JSON document in memory and there are series of subclasses of it to represent the sepecific JSON data type. Below diagram shows the the hierarchy of *Json_dom*.
-![json_dom](/assets/json_dom.png)
+![json_dom](/resources/json_dom.png)
 As per the diargram, we can see that both of *Json_object* and *Json_array* have standard container to store the data. For *Json_object* it uses one *std::map* to store the sorted keys and values, and for *Json_array* it uses one *Preallocated_array* which is declared in file */mysql-server/include/preallocated_array.h* to store all values. For details plz refer */mysql-server/sql/json_dom.h*. 
 
 
 #### Binary string to Value
 
 The first phase parsing binary string flow is shown in below diagram. 
-![parse flow](/assets/parse_flow.png)
+![parse flow](/resources/parse_flow.png)
 
 Parsing is splitted into two different subroutines according to the string type. Object and array will be parsed by using *parse\_array\_or\_object*, compared to scalars(literal, numbers, boolean or null) using *parse_scalar*.
 
@@ -857,7 +857,7 @@ In this part we will not deep into the details of *json_extract*, but only focus
 
 Before analyze the work flow of *json_extract* or *doc->'$.path'* we need to know about the SQL statement execution result representation in MySQL server side. Below UML diagram shows the hierarchy of MySQL server SQL statement execution result of functions. I only summarize some of the functions here, the blue colored functions are mostly used in our service development.
 
-![parse tree node](/assets/item.png)
+![parse tree node](/resources/item.png)
 
 
 As you can see, the native json functions of MySQL are all subclasses of class *Item_func*, each native function has its owner class in the server side implmentation. Here we analyze the full flow of *json_extract* by digging the source code of class *Item_func_json_extract* which is defined in */mysql-server/sql/item\_json\_func.h*. 
@@ -1093,7 +1093,7 @@ This is the overall process of querying one JSON document with *json_extract*, e
 
 By now, we can summarize the overall flow of deserialization of JSON document in below diagram.
 
-![overall flow](/assets/overall_flow.png)
+![overall flow](/resources/overall_flow.png)
            
  
 
