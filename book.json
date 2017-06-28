@@ -1,5 +1,5 @@
 {
-    "author": "lafengnan <panzhongbin@gmail.com>",
+    "author": "panzhongbin@gmail.com",
     "description": "Blog as a blog",
     "extension": null,
     "generator": "site",
@@ -30,11 +30,7 @@
         "pageNumbers": false,
         "paperSize": "a4"
     },
-    "pluginsConfig": {
-        "disqus": {
-            "shortName": "blog"
-        }
-    },
+    "pluginsConfig": {},
     "title": "Blog",
     "variables": {}
 }
