@@ -975,14 +975,7 @@ $$
 #### 普通停机
 
 正常停机函数$H$定义为：
-$$
-(131) \\
-H(\mu, I) \equiv \begin{cases} 
-H_{{RETURN}(\mu)} \quad if \quad w = RETURN \\
-() \qquad \qquad \quad \ \ if \quad w \in \{STOP, SELFDESTRUCT\} \\
-\phi \qquad \qquad \quad \ \ otherwise
-\end{cases}
-$$
+![halt] (/resources/blockchain/halt.png)
 停机操作的返回 数据RETURN有一个设定的函数$H_{RETURN}$。
 
 
