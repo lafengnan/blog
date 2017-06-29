@@ -1,8 +1,19 @@
 {
-    "plugins":["mathjax"],
+    "title": "Blog",
+    "author": "lafengnan",
+    "description":"Nothing is much more.",
+    "language":"zh-hans",
+    "links":{
+        "sidebar":{
+            "Home":"https://www.linkedin.com/in/zhong-bin-pan-20a2973a/"
+        }
+    },
+    "plugins":["katex", "mermaid", "tbfed-pagefooter", "toggle-chapters", "splitter"],
     "pluginsConfig":{
-        "mathjax":{
-            "forceSVG":true
+        "tbfed-pagefooter":{
+            "copyright":"Copyright &copy panzhongbin@gmail.com 2017",
+            "modify_label": "该文件修订时间：",
+            "modify_format": "YYYY-MM-DD HH:mm:ss"
         }
     }
 }
