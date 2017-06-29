@@ -9,8 +9,7 @@
         }
     },
     "plugins":[
-        "-search",
-        "katex", 
+        "mathjax", 
         "mermaid",
         "tbfed-pagefooter",
         "toggle-chapters",
