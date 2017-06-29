@@ -23,6 +23,6 @@
     "lunr": {
              "maxIndexSize": 2000000,
              "ignoreSpecialCharacters": true
-        },
+        }
     }
 }
