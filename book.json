@@ -8,7 +8,13 @@
             "Home":"https://www.linkedin.com/in/zhong-bin-pan-20a2973a/"
         }
     },
-    "plugins":["katex", "mermaid", "tbfed-pagefooter", "toggle-chapters", "splitter"],
+    "plugins":[
+        "-search",
+        "katex", 
+        "mermaid",
+        "tbfed-pagefooter",
+        "toggle-chapters",
+        "splitter"],
     "pluginsConfig":{
         "tbfed-pagefooter":{
             "copyright":"Copyright &copy panzhongbin@gmail.com 2017",
