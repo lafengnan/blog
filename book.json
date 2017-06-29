@@ -16,7 +16,8 @@
             "modify_format": "YYYY-MM-DD HH:mm:ss"
         },
     "lunr": {
-             "maxIndexSize": 2000000
+             "maxIndexSize": 2000000,
+             "ignoreSpecialCharacters": true
         }
     }
 }
