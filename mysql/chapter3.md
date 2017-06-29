@@ -289,15 +289,15 @@ mysql> SHOW MASTER STATUS\G；
 
 ```mermaid
 gantt
-dateFormat YYYY-MM-DDTHH:mm:ss
-title MySQL双主配置事故
+    dateFormat YYYY-MM-DDTHH:mm:ss
+    title MySQL双主配置事故
 
-section 1 M1崩溃
-M1崩溃并重启进入恢复模式 :active, des1, 2016-10-27T17:34:48, 2016-10-27T17:34:55
-M1恢复完成 :active, des2, 2016-10-27T17:34:55, 2016-10-27T17:35:03
+    section 1 M1崩溃
+    M1崩溃并重启进入恢复模式 :active, des1, 2016-10-27T17:34:48, 2016-10-27T17:34:55
+    M1恢复完成 :active, des2, 2016-10-27T17:34:55, 2016-10-27T17:35:03
 
-section 2 M1追赶M2
-M1复制M2的数据(mysql-bin.000009 @1480 ~ mysql-bin.000013 @37820603) :active, des3, 2016-10-27T17:35:03,2016-10-28T01:21:15
+    section 2 M1追赶M2
+    M1复制M2的数据(mysql-bin.000009 @1480 ~ mysql-bin.000013 @37820603) :active, des3, 2016-10-27T17:35:03,2016-10-28T01:21:15
 ```
 
 但是，实际上M2节点的bin-log.000013在位置**37820603**处的时间戳是160830 14:09:56，也就是说这个时间点是早于M1崩溃的时间的。由于在M1追赶M2的这段时间内有很多DDL/DML语句执行，这些语句会直接Drop掉原始数据表从而导致数据丢失。
