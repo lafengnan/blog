@@ -9,7 +9,7 @@
         }
     },
     "plugins":[
-        "mathjax", 
+        "katex", 
         "mermaid",
         "tbfed-pagefooter",
         "toggle-chapters",
@@ -24,8 +24,5 @@
              "maxIndexSize": 2000000,
              "ignoreSpecialCharacters": true
         },
-        "mathjax":{
-            "forceSVG":true
-        }
     }
 }
