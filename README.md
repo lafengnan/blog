@@ -5,3 +5,4 @@
 * [How does mysql implement json](mysql/chapter2.md)
 * [Auto generate API document with swagger](java/chapter1.md)
 * [以太坊黄皮书笔记](blockchain/chapter1.md)
+* [Redis分布式锁（译）](redis/chapter1.md)
