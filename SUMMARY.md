@@ -10,5 +10,6 @@
 * [以太坊黄皮书笔记(4)](blockchain/chapter4.md)
 * [以太坊黄皮书笔记(5)](blockchain/chapter5.md)
 * [Redis分布式锁（译）](redis/chapter1.md)
+* [Redis集群](redis/chapter2.md)
 
 
