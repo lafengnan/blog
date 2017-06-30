@@ -12,5 +12,6 @@
 * [Redis分布式锁（译）](redis/chapter1.md)
 * [Redis集群](redis/chapter2.md)
 * [MySQL数据复制](mysql/chapter3.md)
+* [TOTP基于时间的一次性口令算法](totp.md)
 
 
