@@ -10,6 +10,7 @@
     },
     "plugins":[
         "mathjax", 
+        "page-toc",
         "mermaid",
         "tbfed-pagefooter",
         "toggle-chapters",
