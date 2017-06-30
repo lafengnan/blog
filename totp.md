@@ -610,3 +610,124 @@ DT(String):
 * $$HOTP = DBC2 \mod 10^6 = 872921$$
 
 我们将动态二进制码以31比特无符号大端整数处理，第一个字节标记为0x7f。将这个数值模$$1,000,000$$($$10^6$$)产生6位10进制数字HOTP值872921。
+
+
+
+## 生产实践
+
+网站开发之初，因为时间紧迫我们没有时间自己实现一套TOTP，因此在各种google之后选择了Google开源的TOTP方案[GoogleAuth](https://github.com/wstrange/GoogleAuth)，在其基础上做了二次封装应用刚在我们的网站中。目前该方案很好的应用于注册、支付和修改密码等操作服务中。
+
+我们使用Redis存储每个用户请求的OTP码，超时时间为1分钟。主要接口封装了获取OTP、获取密钥以及验证OTP三个方法。其主要接口如下：
+
+```java
+package com.xtz.platform.totp;
+
+import com.xyz.platform.googleauth.GoogleAuthenticator;
+import com.xyz.platform.googleauth.GoogleAuthenticatorConfig;
+import com.xyz.platform.googleauth.GoogleAuthenticatorKey;
+import org.apache.log4j.Logger;
+
+/**
+ * Created by chris on 15/11/23.
+ */
+
+
+/**
+ * This class is a wrapper of Modified GoogleAuth to implement TOTP algorithm.
+ * <p/>
+ * This class lets users create a new 16-bit base32-encoded secret key with
+ * the validation code calculated at requested time (the UNIX epoch).
+ * <p/>
+ * @author panzb@xyz.com
+ * @version 0.1.0
+ */
+
+public class TOTP {
+
+    private static Logger logger = Logger.getLogger(TOTP.class);
+
+    private CredentialRepository credentialRepository;
+    private static GoogleAuthenticator googleAuthenticator = new GoogleAuthenticator();
+
+    public TOTP(CredentialRepository repository) {
+        this.credentialRepository = repository;
+    }
+
+    public void setNameSpace(String ns) {
+        credentialRepository.setRedisNameSpace(ns);
+    }
+
+    public void setWindowSize(int windowSize) {
+        GoogleAuthenticatorConfig config = googleAuthenticator.getConfig();
+        config.setWindowSize(windowSize);
+        googleAuthenticator.setConfig(config);
+    }
+
+    private GoogleAuthenticatorKey createCredentials(String userName) {
+        return googleAuthenticator.createCredentials(userName);
+    }
+
+    public String getOTP(String userName) {
+        GoogleAuthenticatorKey key = createCredentials(userName);
+        // Make sure to generate 6 digits otp code, padding left w/ 0
+        String otp = String.format("%06d", key.getVerificationCode());
+        logger.debug("otp code: " + otp);
+        return otp;
+    }
+
+    public String getSecret(String userName) {
+        return credentialRepository.getSecretKey(userName);
+    }
+
+    public boolean isValidOTP(String userName, Integer otp) throws NullPointerException {
+        return googleAuthenticator.authorizeUser(userName, otp);
+    }
+}
+```
+
+
+
+实际使用时需要按照下列步骤操作
+
+1. 首先在pom文件中引入依赖，使用基于GoogleAuth二次封装的内部库
+
+   ```xml
+   <dependency>
+     <groupId>com.xyz.platform</groupId>
+     <artifactId>totp</artifactId>
+     <version>1.0.1</version>
+   </dependency>
+   ```
+
+2. 然后在Serverlet文件中配置Spring Bean
+
+```xml
+<bean name="credentialRepository" class="com.xyz.platform.totp.CredentialRepository">
+    <property name="host" value="${redis.host}"/>
+    <property name="port" value="${redis.port}"/>
+</bean>
+<bean name="totpInst" class="com.xyz.platform.totp.TOTP">
+    <constructor-arg name="repository" ref="credentialRepository"/>
+    <property name="nameSpace" value="util:hash:auth"/>
+</bean>
+```
+就可以在服务代码中使用基于GoogleAuth的TOTP算法实现的一次性口令服务了。
+
+```java
+import com.xzy.platform.totp.TOTP;
+
+public class Demo {
+
+    @Autowired
+    private TOTP totp;
+
+    public String getOTP(String name) {
+       return totp.getOTP(name);
+    }
+
+   public boolean validateOTP(String name, Integer otp) {
+       return totp.isValidOTP(name, otp);
+   }
+}
+```
+
