@@ -1,6 +1,6 @@
 # TOTP基于时间的一次性口令算法
 
-TOTP（Time-Based One-Time Password Algorithm)是目前各大网站以及移动APP的两步验证的重要技术支撑，其参考协议为[RFC6238](https://tools.ietf.org/html/rfc6238)。虽然不是严格的标准协议，但是对于了解TOTP的原理已经足够。
+TOTP（Time-Based One-Time Password Algorithm)是目前各大网站以及移动APP两步验证的重要技术支撑，其参考协议为[RFC6238](https://tools.ietf.org/html/rfc6238)。虽然不是严格的标准协议，但是基本上属于事实上的标准了。
 
 
 
@@ -8,15 +8,15 @@ TOTP（Time-Based One-Time Password Algorithm)是目前各大网站以及移动A
 
 ### 摘要
 
-本文描述了定义在[RFC 4226](https://tools.ietf.org/html/rfc4226)中的名为"基于HMAC的一次性口令算法（HMAC-based One-Time Password, HOTP）"的扩展，以支持基于时间的进动因子。HOTP算法描述了一个基于时间的OTP算法，其进动因子是一个事件计数器。当前的工作则基于一个事件值作为进动因子。基于时间的OTP算法变体提供了短时效的OTP值，以期增强安全性。
+本文描述了在[RFC 4226](https://tools.ietf.org/html/rfc4226)中定义的名为"基于HMAC的一次性口令算法（HMAC-based One-Time Password, HOTP）"的扩展，以支持基于时间的进动因子。HOTP算法描述了一个基于时间的OTP算法，其进动因子是一个事件计数器。当前的工作则基于一个事件值作为进动因子。基于时间的OTP算法变体提供了短时效的OTP值，以期增强安全性。
 
-推荐算法可以广泛应用于网络应用程序，从远程虚拟专用网（VPN）访问和Wi-Fi网络登录到面向事务的Web应用程序都可以使用。做着相信一个打通商业和开源实现之间的互操作性的通用共享算法可以促进“两步验证”在因特网上的普及应用。
+推荐算法可以广泛应用于网络应用程序，从远程虚拟专用网（VPN）访问和Wi-Fi网络登录到面向事务的Web应用程序都可以使用。作者相信一个打通商业和开源实现之间互操作性的通用共享算法可以促进“两步验证”在因特网上的普及应用。
 
 ### 本文状态
 
-本文不是一篇因特网标准跟踪规范，仅用于信息目的。
+本文不是一篇因特网标准追踪规范，仅用于信息目的。
 
-本文是互联网工程任务小组（Internet Engineering Task Force, IETF)的工程成功。它代表IETF社区的共识。本文已经收到了公开的审查并且已经被互联网工程指导小组（Internet Engineering Steering Group, IESG)批准。并不是所有的经由IESG批准的文档都能成为互联网标准的；详情参考[Section 2 of RFC 5741](https://tools.ietf.org/html/rfc5741#section-2).
+本文是互联网工程任务小组（Internet Engineering Task Force, IETF)的工作成果。它代表IETF社区的共识。本文已经收到了公开的审查并且已经被互联网工程指导小组（Internet Engineering Steering Group, IESG)批准。并不是所有的经由IESG批准的文档都能成为互联网标准的；详情请参考[Section 2 of RFC 5741](https://tools.ietf.org/html/rfc5741#section-2).
 
 关于本文当前状态的信息，勘误，以及如何提供反馈请参考http://www.rfc-editor.org/info/rfc6238。
 
@@ -43,23 +43,21 @@ TOTP（Time-Based One-Time Password Algorithm)是目前各大网站以及移动A
 
 #### 1.1 范畴
 
-本文描述了定义在[RFC 4226](https://tools.ietf.org/html/rfc4226)中的名为"基于HMAC的一次性口令算法（HMAC-based One-Time Password, HOTP）"的扩展，以支持基于时间的进动因子。
+本文描述了在[RFC 4226](https://tools.ietf.org/html/rfc4226)中定义的名为"基于HMAC的一次性口令算法（HMAC-based One-Time Password, HOTP）"的扩展，用以支持基于时间的进动因子。
 
 #### 1.2 背景
 
-正如[RFC4226](https://tools.ietf.org/html/rfc4226)中定义的，HOTP算法是基于*HMAC-SHA-1*算法（规范为[RFC2104](https://tools.ietf.org/html/rfc2104))的，并且使用一个递增的计算器值来表示HMAC计算中的消息。
+正如[RFC4226](https://tools.ietf.org/html/rfc4226)中定义的那样，HOTP算法基于*HMAC-SHA-1*算法（规范为[RFC2104](https://tools.ietf.org/html/rfc2104))，同时用一个递增计数器值表示HMAC运算中的消息。
 
-总的来说，*HMAC-SHA-1*计算的输出被截断以期获得用户友好的值：
+总的来说，*HMAC-SHA-1*运算的输出被截断以期获得对用户友好的值：
 
-$$HOTP(K,C) = Truncate(HMAC-SHA-1(K,C)) $$
+$$HOTP(K,C) = Truncate(HMAC \textrm{-} SHA \textrm{-}1(K,C)) $$
 
-其中，Truncate表示该函数可以将一个*HMAC-SHA-1*值转换成一个HOTP值。$$K$$和$$C$$表示共享密钥和计数器值；详情参考[RFC4226](https://tools.ietf.org/html/rfc4226)。
+其中，Truncate表示该函数可以将一个*HMAC-SHA-1*值转换成一个HOTP值。$$K$$和$$C$$表示共享密钥和计数器值；详情请参考[RFC4226](https://tools.ietf.org/html/rfc4226)。
 
-TOTP是该算法（HOTP）基于时间的变体，其中用一个代表时间引用和事件步进的值$$T$$代替HOTP计算中的计数器$$C$$。
+TOTP是该算法（HOTP）基于时间的变体，其中用一个代表时间引用和时间步进的值$$T$$代替HOTP运算中的计数器$$C$$。
 
- TOTP实现**可以**使用基于SHA-256或者SHA-512的HMAC-SHA-256或者HMAC-SHA-512函数代替[RFC4226](https://tools.ietf.org/html/rfc4226)中描述的HOTP算法使用的HMAC-SHA-1函数。
-
-
+ TOTP实现**可以**用基于SHA-256或者SHA-512的HMAC-SHA-256或者HMAC-SHA-512函数代替[RFC4226](https://tools.ietf.org/html/rfc4226)中描述的HOTP算法使用的HMAC-SHA-1函数。
 
 ### 2. 标记和术语
 
@@ -67,9 +65,9 @@ TOTP是该算法（HOTP）基于时间的变体，其中用一个代表时间引
 
 ### 3. 算法需求
 
-这一节总结了设计TOTP算法需要考虑需求。
+这一节总结了设计TOTP算法需要考虑的需求。
 
-R1：证明者（比如，令牌（token）和软令牌（soft token））和验证者（鉴权或者验证服务器）**必须**知道或者有能力获得用于生成OTP的Unix时间（例如，从UTC时间1970年1月1日午夜以来流逝的秒数）。可以参考[UT](https://tools.ietf.org/html/rfc6238#ref-UT)获得通常所知的“Unix时间”的详细定义。证明者使用的时间精度会影响时钟同步必须完成的频次，详情参见[第6节](#6.再同步).
+R1：证明者（比如，令牌（token）和软令牌（soft token））和验证者（鉴权或者验证服务器）**必须**知道或者有能力获得用于生成OTP的Unix时间（例如，从UTC时间1970年1月1日午夜以来流逝的秒数）。可以参考[UT](https://tools.ietf.org/html/rfc6238#ref-UT)获得通常所知的“Unix时间”详细定义。证明者使用的时间精度会影响时钟同步必须完成的频次，详情参见[第6节](#6.再同步).
 
 R2：证明者和验证者**必须**共享相同的密钥或者生成共享密钥的密钥转换知识。
 
@@ -77,7 +75,7 @@ R3：算法**必须**使用HOTP[RFC4226](https://tools.ietf.org/html/rfc4226)作
 
 R4：证明者和验证者**必须**使用相同的时间步进值$$X$$。
 
-R5：每个证明者都必须**有一个唯一的密钥（secret key)。
+R5：每个证明者都**必须**有一个唯一的密钥（secret key)。
 
 R6：密钥**应该**随机产生或者使用密钥生成算法生成。
 
@@ -85,12 +83,12 @@ R7：密钥**可以**存储在一个防篡改的设备中，并且**应该**被�
 
 ### 4. TOTP算法
 
-这个HOTP算法变体描述了一个基于以时间因子作为计数器表述的一次性的口令值的计算方法。
+这个HOTP算法变体描述了一个基于以时间因子作为计数器的一次性的口令值的计算方法。
 
 #### 4.1 标记
 
-- $$X$$表示以秒为单位的时间步进（默认值 $$X = 30$$秒），是一个系统参数
-- $$T_0$$是开始启动时间步进计数的Unix时间（默认值是0，例如Unix epoch值），也是一个系统参数
+- $$X$$表示以秒为单位的时间步进（默认值 $$X = 30$$秒），是一个系统参数。
+- $$T_0$$是开始启动时间步进计数的Unix时间（默认值是0，例如Unix epoch值），也是一个系统参数。
 
 #### 4.2 描述
 
@@ -104,7 +102,7 @@ R7：密钥**可以**存储在一个防篡改的设备中，并且**应该**被�
 
 #### 5.1 总则
 
-该算法的安全性和强度依赖于底层基于使用SHA-1作为散列函数的HMAC[RFC2104](https://tools.ietf.org/html/rfc2104) HOTP基石。
+该算法的安全性和强度依赖于底层基于SHA-1散列函数的HMAC[RFC2104](https://tools.ietf.org/html/rfc2104) HOTP基石。
 
 安全性分析的详细结论在文档[RFC4226]()中，即，对于所有的实际使用目的来说，对不同的输入的动态截断都是均匀独立分布的字符串。
 
@@ -548,7 +546,7 @@ HOTP算法基于一个递增的计数器和一个仅对令牌与验证服务可�
 
 由于HMAC-SHA-1运算的输出是160比特，我们必须将该值截断成用户到可以很容易输入的值。
 
-$$HOTP(K,C) = Truncate(HMAC{-}SHA{-}1(K, C))$$
+$$HOTP(K,C) = Truncate(HMAC \textrm{-} SHA \textrm{-}1(K, C))$$
 
 其中，
 
@@ -564,11 +562,11 @@ $$HOTP(K,C) = Truncate(HMAC{-}SHA{-}1(K, C))$$
 
 操作由3个不同的步骤组成：
 
-第一步：生成一个HMAC-SHA-1值，HS = HMAC-SHA-1(K,C) // HS是一个20字节的字符串
+第一步：生成一个HMAC-SHA-1值，$$HS = HMAC \textrm{-} SHA \textrm{-}1(K,C) $$// HS是一个20字节的字符串
 
-第二步：产生一个4字节字符串（动态截断）Sbits = DT(HS), // DT，在下面定义， 返回一个31比特字符串
+第二步：产生一个4字节字符串（动态截断）$$Sbits = DT(HS)$$ // DT在下面定义， 返回一个31比特字符串
 
-第三步：计算一个HOTP值， Snum = StToNum(Sbits), //将S转换成一个 $$0… 2^{31}-1$$的数
+第三步：计算一个HOTP值，$ Snum = StToNum(Sbits)$$, //将S转换成一个 $$$0… 2^{31}-1$$的数
 
 返回 $$D = Snum \mod 10^{Digit}$$, // D是范围$$0...10^{Digit} - 1$$内的数
 
@@ -580,11 +578,11 @@ $$HOTP(K,C) = Truncate(HMAC{-}SHA{-}1(K, C))$$
 
 DT(String): 
 
-​        OffsetBits = String[19]的低4位
+​        $$OffsetBits = String[19]$$的低4位
 
-​        Offset ＝ StToNum(OffsetBits) // 0 <= Offset <= 15
+​        $$Offset ＝ StToNum(OffsetBits)$$ // 0 <= Offset <= 15
 
-​        P = String[offset]… String[offset+3]
+​        $$P = String[offset]… String[offset+3]$$
 
 ​        return P[1:31] // 返回P的后31位是为了避免符号位干扰
 
@@ -606,7 +604,7 @@ DT(String):
 * 低4位是0xa（偏移量）
 * 偏移量值是第10字节（0xa）
 * 第10字节开始的4个字节：0x50ef7f19，是动态而金子码DBC1
-* DBC1的MSB是0x50，因此DBC2 = DBC1 = 0x50ef7f19
+* DBC1的MSB是0x50，因此$$DBC2 = DBC1 = 0x50ef7f19$$
 * $$HOTP = DBC2 \mod 10^6 = 872921$$
 
 我们将动态二进制码以31比特无符号大端整数处理，第一个字节标记为0x7f。将这个数值模$$1,000,000$$($$10^6$$)产生6位10进制数字HOTP值872921。
