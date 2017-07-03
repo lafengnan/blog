@@ -1,4 +1,4 @@
-# 两将军问题
+# 两将军与拜占庭将军问题
 
 @2017.1.19
 
@@ -6,7 +6,7 @@
 
 
 
-在计算机学科中，**两将军问题**是一个[思想实验](https://en.wikipedia.org/wiki/Thought_experiment)，用于揭示在一个不可靠的链接上通过通信来协调统一的行动所面临的设计挑战和缺陷。“两将军问题”与更加通用的[拜占庭将军](https://en.wikipedia.org/wiki/Byzantine_Generals)问题有关（虽然它比后者发表的时间要早得多），尽管“两将军问题”适用于所有两方参与者的可能出现失败的通信系统中，但是通常在关于[计算机网络](https://en.wikipedia.org/wiki/Computer_networking)的入门课程中出现（特别是在[传输控制协议](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)中说明TCP为什么无法保证不同节点之间状态的一致性及其原因）。在[认识逻辑](https://en.wikipedia.org/wiki/Epistemic_logic)中，一个重要的原则是问题强调了[共识](https://lafengnan.gitbooks.io/blog/content/distributed-system/chapter1.html)的重要性。有些作者也将其称为**两将军悖论**、**两军问题**或者**协同攻击问题**。**两将军问题**是第一个被证实的计算机通信无解问题，该证明的一个重要结论是类似于**拜占庭将军问题**的问题在面临无法预知的通信错误时都是无法解决的，从而为分布式一致性协议提供了切实可行的预测基础。
+在计算机学科中，**两将军问题**是一个[思想实验](https://en.wikipedia.org/wiki/Thought_experiment)，用于揭示在一个不可靠的链接上通过通信来协调统一的行动所面临的设计挑战和缺陷。“两将军问题”与更加通用的[拜占庭将军](https://en.wikipedia.org/wiki/Byzantine_Generals)问题有关（虽然它比后者发表的时间要早得多），尽管“两将军问题”适用于所有两方参与者可能出现失败的通信系统中，但是通常在关于[计算机网络](https://en.wikipedia.org/wiki/Computer_networking)的入门课程中出现（特别是在[传输控制协议](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)中说明TCP为什么无法保证不同节点之间状态的一致性及其原因）。在[认识逻辑](https://en.wikipedia.org/wiki/Epistemic_logic)中，一个重要的原则是问题强调了[共识](https://lafengnan.gitbooks.io/blog/content/distributed-system/chapter1.html)的重要性。有些作者也将其称为**两将军悖论**、**两军问题**或者**协同攻击问题**。**两将军问题**是第一个被证实的计算机通信无解问题，该证明的一个重要结论是类似于**拜占庭将军问题**的问题在面临无法预知的通信错误时都是无法解决的，从而为分布式一致性协议提供了切实可行的预测基础。
 
 ## 定义
 
@@ -18,7 +18,7 @@
 
 A1军与A2军需要互相通信，但是他们的信使可能会被B军抓获。
 
-两位将军在达成一致肯定会发动进攻时，尚未对进攻时间统一意见。为了稳操胜券，需要两个将军指挥他们的军队同时对这座城市发起进攻，否则单独进攻的军队就是自取灭亡。因此两位将军必须互相通信以决定进攻时间，并且同意在那个时间进攻。 每位将军都**必须**知道另一位将军知道两人对作战计划已经达成一致。由于[消息接收方的应答](https://en.wikipedia.org/wiki/Acknowledgement_(data_networks))和原始消息一样可能很容易就丢失，这里隐藏了这样一个事实：需要无限的消息序列来达成[一致](https://en.wikipedia.org/wiki/Consensus_(computer_science))。
+两位将军在对进攻达成一致时，尚未对进攻时间统一意见。为了稳操胜券，需要两个将军指挥他们的军队同时对这座城市发起进攻，否则单独进攻的军队就是自取灭亡。因此两位将军必须互相通信以决定进攻时间，并且同意在那个时间进攻。 每位将军都**必须**知道另一位将军知道两人对作战计划已经达成一致。由于[消息接收方的应答](https://en.wikipedia.org/wiki/Acknowledgement_(data_networks))和原始消息一样可能很容易就丢失，这里隐藏了这样一个事实：需要无限的消息序列来达成[一致](https://en.wikipedia.org/wiki/Consensus_(computer_science))。
 
 这个思想实验包括他们如何才能达成一致的过程。"两将军问题"最简单的形式中，有一位将军是Leader身份，他来决定进攻的时间，并且必须将这个时间传达给另一位将军。这个问题引出将军可以使用的算法，包括：发送消息和处理回执消息，从而使他们可以正确的得到如下结论：
 
@@ -72,8 +72,75 @@ A1军与A2军需要互相通信，但是他们的信使可能会被B军抓获。
 
 
 
+## 拜占庭将军问题
+
+因为[Leslie Lamport](https://en.wikipedia.org/wiki/Leslie_Lamport)在[论文](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/12/The-Byzantine-Generals-Problem.pdf)中提出了拜占庭将军问题，从而使这个问题流传甚广。那么什么是拜占庭将军问题呢？其实是Leslie Lamport偷用了所谓的“中国将军问题”，也就是本文所述的“两将军问题“中的想法，并加入了新的假设条件，提出的新问题，他加入的新条件是：
+
+* 将军的数量不止两个，而是很多个将军
+* 这些将军中存在叛徒
+
+作者在提出这个新的问题时为了避免冒犯读者，选择了当时完全封闭的社会”阿尔巴尼亚“作为将军们的祖国，因此称其为”阿尔巴尼亚将军问题“。但是另一个人Jack Goldberg意识到这个世界上在阿尔巴尼亚之外肯定还存在阿尔巴尼亚人，并且阿尔巴尼亚不会永远是一个“黑洞”一样的存在，他建议Leslie Lamport用一个新名字来代替，于是就出现了“拜占庭将军问题”。<sup>4</sup>
+
+### 问题
+
+存在这么一组将军，每个人领导一部分拜占庭军队来包围一座城市。这些将军希望制定一份计划来攻击那座城市。在最简单的形式中，将军们只须决定是进攻还是撤退。有些将军可能倾向于进攻，而其他人可能想撤退。最重要的是，每个将军都同意一个共同的决议：少部分将军发起的非全力进攻可能会溃败，这比一次协调一致的进攻或者撤退都要更糟糕。
+
+将军中存在叛徒时这个问题就复杂了。这些叛徒将军不仅可能投票给一个不好的方案，他们还可能有选择的去做这件事。比如，如果有9位将军投票，其中4人支持进攻而且另外4人支持撤退，那么第9位将军可以投票给那些支持撤退的将军，同时也投票给那些支持进攻的将军。那些收到9个将军撤退选票的将军会撤退，而剩余的人会开始进攻（对进攻者来说可能并不好）。如果将军们是被分隔开的，必须通过信使发送选票问题就会更复杂，因为选票可能无法成功送达或者被假冒选票替代。
+
+如果忠诚的（不是靠不住的）将军对他们之间的策略有个一致的决议，那么拜占庭容错是可以达成的。需要注意的是，对于丢失的消息可以有一个默认的选票值。比如，丢失的消息可以赋值为\<Null\>。进一步讲，如果\<Null\>选票占多数，可以使用一个预先分配的默认策略（例如，撤退额）。
+
+这个问题在计算机系统中的典型映射是计算机就是那些将军，他们之间的数字通信系统链路就像信使。
+
+
+
+### 一直的拜占庭错误示例
+
+在两份等价的论文中给出了很多拜占庭错误的例子<sup>3</sup><sup>4</sup>。这些例子在[NASA]()的DASHlink网页中有描述，这些网页中也描述了一些可能导致拜占庭错误的现象。
+
+拜占庭错误在新建的[佛吉尼亚级核潜艇](https://en.wikipedia.org/wiki/Virginia-class_submarine)的耐力测试中很罕见也不寻常，至少在2005年是这样的（问题公开报道的时间）。
+
+### 早期方案
+
+Lamport，Shostak和Pease在1982年的论文中描述了一些方案。他们认为将军问题可以简化为解决一个“司令和中尉”问题，这里忠诚的中尉们必须步调一致，并且只要司令是忠诚的，那么他们的动作必须服从司令的命令。
+
+* 一个方案考虑的是消息可能会被篡改的情况，只要叛徒将军的数量小于将军数量的1/3拜占庭容错就可以达成。无法处理大于等于1/3的叛徒可以降维成证明如果司令是叛徒，那么”一个司令和两个中尉“问题是无解的。为了证明这点，假设我们有一个叛徒司令A，与两个中尉B和C。当A告诉B攻击，C撤退，并且让B和C互相给对方发送消息传达A的命令，这时不论是B还是C都无法指出谁是叛徒，因为不可能是A---另一个中尉可能篡改了来自A的消息。可以表明，如果将军总数是$$n$$，其中叛徒的数量是$$t$$，那么当且仅当$$n > 3t$$时该问题有解，并且通信是同步的（带有延迟）<sup>5</sup>
+* 第二个方案需要无法篡改的消息签名。对于安全敏感的关键系统，[数字签名](https://en.wikipedia.org/wiki/Digital_signature)（在线代计算机系统中，可以通过使用[公钥加密](https://en.wikipedia.org/wiki/Public-key_cryptography)实现）在存在任意数量的叛徒将军的情况下可以提供”拜占庭容错“方案。虽然如此，对于安全敏感的关键系统，简单的错误检查代码，例如[CRCs](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)以很低的成本提供了相同的或者更好的覆盖。这对拜占庭和非拜占庭错误都有效。因此，加密的数字签名方法对于安全敏感的关键系统并不是一个好的选择，除非存在一个特殊的安全性威胁。但是错误检测代码，例如CRCs是比密码更好的技术，无法为安全性敏感的关键系统提供足够的覆盖率。这是由*Schrödinger CRC*场景提供的，这个场景中消息带有CRC保护，一个拜占庭错误比特位向不同的观察者展示不同的数据，但是不同的观察者看到的都是以个有效的CRC。
+* 并非所有的将军都可以直接互相通信的情况下也存在前两个方案允许的拜占庭容错行为
+
+1980年代设计了很多实现了拜占庭容错的系统，包括Draper的[FTMP](https://en.wikipedia.org/wiki/Byzantine_fault_tolerance#cite_note-HopkinsLala1987-11), 霍尼韦尔的[MMFCS](https://en.wikipedia.org/wiki/Byzantine_fault_tolerance#cite_note-MMFCS-12)和SRI的[SIFT](https://en.wikipedia.org/wiki/Byzantine_fault_tolerance#cite_note-13)。
+
+### 实际的拜占庭容错方案
+
+1999年，Miguel Castro和Barbara Liskov介绍了”实际的拜占庭如弄错（PBFT）“算法，提供了高性能的拜占庭状态机复制， 每秒钟可以以亚毫秒递增的延迟来处理数千个请求。
+
+PBFT发表之后，很多BFT协议被发展出来提高其健壮性和性能。例如，Q/U， HQ，Zyzzyva，和AbsTRACTs等等，解决了性能和开销问题，其他协议，比如Aardvark和RBFT解决了健壮性问题。不止如此，Adapt试图利用已有的BFT协议，通过根据依赖条件的变化，在协议之间切换来提高系统的的健壮性和性能。而且，BFT协议被用于协调受信的模块缩减其副本数量，例如A2M-PBFT-EA和MinBFT。
+
+### 软件
+
+UpRight是一个吸纳了很多协议创新的开源库，用于构建崩溃（“up”）和拜占庭行为（“right”）容忍的服务。
+
+除了PBFT和UpRight，还有BFT-SMaRt库，一个用Java开发的高性能的拜占庭容错的状态机复制库。这个库实现了一个和PBFT非常相似的协议，以及一个配套的提供状态转换和主机在线重配置的协议。BFT-SMaRt是最近的实现状态机复制的尝试，仍然处于活跃的维护状态。
+
+Archistar利用一个瘦BFT层用于通信，它在LGPLv2许可证下用Java构建了一个安全的多云存储系统原型，专注于简单性和可读性。它的目标是称为下一步研究的基础。
+
+Askemos是一个并发的、垃圾回收的基于拜占庭容错的状态机复制基础上的持久化编程平台。它构建了[智能合约](https://en.wikipedia.org/wiki/Smart_contracts)的执行环境原型。
+
+Tendermint是一个用于BFT状态机复制的通用软件。使用socket协议使状态机可以用任何编程语言实现，同时为状态机提供了影响一致性的元素的方式，比如活跃的进程列表。Tendermint以[区块链](https://en.wikipedia.org/wiki/Blockchain_(database))的形式实现，可以分批承担BFT的开销，而且从错误中恢复的速度更快。
+
+### 实践
+
+[比特币](https://en.wikipedia.org/wiki/Bitcoin)是使用BFT的一个例子，比特币是一个点对点的数字货币系统。比特币网络以并行的方式工作，产生一个[散列货币](https://en.wikipedia.org/wiki/Hashcash)形态的[工作量证明](https://en.wikipedia.org/wiki/Proof-of-work_system)链。工作量证明链是用于解决拜占庭错误，使系统状态达到全局一致的关键。
+
+有些航空系统，比如波音777飞机信息管理系统（通过他的ARINC 659 SAFEbus ® 网络）、波音777飞行控制系统以及波音787飞行控制系统都使用拜占庭容错机制。因为这些都是实时系统，他们的拜占庭容错方案必须具备非常低的延迟。例如，SAFEbus对命令可以以一微妙的延迟达到拜占庭容错。
+
+有些飞船，例如SpaceX Dragon飞行系统用他们自己的方式考虑拜占庭容错机制。
+
+拜占庭容错机制使用将收到的消息（或者只是一个签名）向该消息的其他接收者重复的模块。所有这些机制创造了这样一假设，那就是重复一个消息的动作阻塞了拜占庭症状的传播。对于那些有较高安全度或者安全性敏感的系统，这个假设必须证明在一个可接受的[错误恢复](https://en.wikipedia.org/wiki/Fault_coverage)级别上是成立的。当通过测试提供证明时，其中一个困难是创建一个足够宽的具有拜占庭症状的信号范围。这样的测试通常需要特殊的错误介入。
+
 ## 附录
 
 1. [Wikipedia Tow generals]([https://en.wikipedia.org/wiki/Two_Generals%27_Problem](https://en.wikipedia.org/wiki/Two_Generals%27_Problem))
 2. ["Some constraints and trade-offs in the design of network communications"](http://hydra.infosys.tuwien.ac.at/teaching/courses/AdvancedDistributedSystems/download/1975_Akkoyunlu,%20Ekanadham,%20Huber_Some%20constraints%20and%20tradeoffs%20in%20the%20design%20of%20network%20communications.pdf)
 3. ["Notes on Data Base Operating Systems"](http://portal.acm.org/citation.cfm?coll=GUIDE&dl=GUIDE&id=723863)
+4. https://www.microsoft.com/en-us/research/publication/byzantine-generals-problem/?from=http%3A%2F%2Fresearch.microsoft.com%2Fen-us%2Fum%2Fpeople%2Flamport%2Fpubs%2Fbyz.pdf
+5. https://en.wikipedia.org/wiki/Byzantine_fault_tolerance#cite_note-9
