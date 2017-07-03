@@ -14,6 +14,6 @@
 * [MySQL数据复制](mysql/chapter3.md)
 * [TOTP基于时间的一次性口令算法](totp.md)
 * [共识](distributed-system/chapter1.md)
-* [两将军问题](distributed-system/chapter2.md)
+* [两将军与拜占庭将军问题](distributed-system/chapter2.md)
 
 
