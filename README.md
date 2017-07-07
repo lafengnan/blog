@@ -17,3 +17,4 @@
 * [两将军与拜占庭将军问题](distributed-system/chapter2.md)
 * [Raft算法](distributed-system/chapter3.md)
 * [缓存方案设计](distributed-system/chapter4.md)
+* [统一ID服务](id-generator.md)
