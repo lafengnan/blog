@@ -12,7 +12,7 @@
 
 其中积分系统在二期才设计上线，详情请参见[积分系统]()
 
-![coupon](/resources/coupon.png)
+![marketing](/resources/marketing.png)
 
 ## 系统设计
 
