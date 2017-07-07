@@ -47,7 +47,7 @@
 
 memecached是怎样实现数据分区的呢？为了使系统设计足够简单并获得更高的性能，memcached并未实现分布式集群功能，因为如果用户想让数据分布到不同的memcached实例中，需要通过在客户端利用一定的数据分配算法来将数据分配到不同的实例中。也就是说memcached是不管你数据怎么分配的，它只负责以尽可能快的速度帮你存取数据，而不管你的数据是什么，从哪里来，要到何方去。这里盗了一张图正好展示了memcached的数据是如何分片的了：
 
-![memcached-distribution](/resources/memecached-distribution.png)
+![memcached-distribution](/resources/memcached-distribution.png)
 
 也就是说当某台应用程序服务器接收到一条请求时，服务器要用自己的算法去找到数据缓存的存取节点，算法依赖的是缓存数据的key，比如最简单的模运算分片算法：根据数据的key计算CRC校验码，然后对其进行模运算获得memcached实例的节点。上帝是公平的。你的算法简单也就意味着复杂度可能隐藏在其它方面，比如：目标节点处于失效状态，如果是一个写操作就可能需要进行额外的rehash操作，将数据分配到另一个可用节点中；如果是读操作，这时候可能就得越过缓存直接去数据库读数据了。这里一旦进行rehash就会出现失效节点上全部数据的重分配问题，这样会导致严重的效率问题。基于效率的考虑，出现了更好的[一致性哈希](https://en.wikipedia.org/wiki/Consistent_hashing)算法，通过将数据与缓存节点的散列值统一分配在一个环形空间中的方案，减少由于节点失效或者新增节点引发的大规模数据迁移问题。一致性哈希算法目前在大量的分布式环境中使用，包括OpenStack种的对象存储模块[swift](https://wiki.openstack.org/wiki/Swift)下图展示了一致性哈希的环状空间：
 
