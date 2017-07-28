@@ -20,5 +20,6 @@
 * [统一ID服务](id-generator.md)
 * [营销系统](coupon.md)
 * [热销榜](热销榜.md)
+* [缩略图优化](thumbnail_tunning.md)
 
 
