@@ -75,7 +75,7 @@ Java中的线程同步机制也有多种，包括：
   - 各种原子类型（AtomicBoolean，AtomicInteger...)
 * volatile变量
 
-虽然Java对线程以及线程的同步机制进行了一次封装，但是实际上最终”Java线程“都要与操作系统线程关联，并由操作系统进行调度。我没有阅读过JVM的源码，但是按照JSR133中提及的线程概念与同步机制，大致可以猜出**synchronized**关键字其实底层试用了互斥量mutex，volatile变量强迫CPU每次都从内存中存取数据而非从其自身的Cache中读取数据。其他在*java.uti.concurrent*包中提供的各种锁机制也与传统的所机制没有什么区别。
+虽然Java对线程以及线程的同步机制进行了一次封装，但是实际上最终”Java线程“都要与操作系统线程关联。我没有阅读过JVM的源码，但是按照JSR133中提及的线程概念与同步机制，大致可以猜出**synchronized**关键字其实底层试用了互斥量mutex，volatile变量强迫CPU每次都从内存中存取数据而非从其自身的Cache中读取数据。其他在*java.uti.concurrent*包中提供的各种锁机制也与传统的所机制没有什么区别。
 
 ## 0x3 Java线程锁
 
@@ -240,6 +240,46 @@ while(!this.done)
 ```
 
 编译器可以对*this.done*只读取一次，然后在每次循环中重用缓存的值。这也意味着，即使另一个线程已经改变了*this.done*的值，循环不会终止。
+
+
+
+## 0x5 线程状态
+
+Java线程的状态可以从*java.lang.Thread.State*枚举类中窥其全貌，该枚举为Java线程定义了6个状态，同一时刻每个线程只能处于一种状态中，状态的详细信息如下(删除了注释信息)：
+
+```java
+public enum State {
+        NEW, 
+        RUNNABLE,
+        BLOCKED,
+        WAITING,
+        TIMED_WAITING,
+        TERMINATED;
+}
+```
+
+其中，
+
+* **NEW**表示一个尚未启动的线程状态；
+* **RUNNALBE**表示线程可以在JVM中执行了，但也可能正在等待操作系统提供资源（比如处理器资源）；
+* **BLOCKED**表示线程被monitor锁阻塞了，处于阻塞状态的线程会等待一个monitor锁以进入*synchronized*代码块或者*synchronized*方法或者在调用*Object.wait()*方法后重入*synchronized*代码块或者方法；
+* **WAITING**表示线程正在等待其他线程执行一个特定的操作（比如一个执行了wait()方法的线程可能等待另一个线程调用notify()或者notifyAll()方法）。线程可以通过下述方法进入**WAITING**状态：
+  - 调用*Object.wait()*方法
+  - 调用*Thread类中的join()*方法
+  - 调用*LockSupport.park()*方法
+* **TIMED_WAITING**表示线程等待给定的时间，该状态与**WAITING**状态类似，但是需要提供超时时限。线程可以通过下属方法进入**TIMED_WAITING**状态：
+  - 调用*Thread.sleep()*方法
+  - 调用*Object.wait(long millisecs)*方法
+  - 调用*Thread类中的join(long millisecs)*方法
+  - 调用*LockSupport.parkNanos*方法
+  - 调用*LockSupport.parkUntil*方法
+* **TERMINATED**表示线程已经完成执行，进入终止状态
+
+线程这几个状态的转换关系如下图所示：
+
+![threads_state](/resources/threads_state.png)
+
+
 
 
 
