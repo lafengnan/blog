@@ -134,7 +134,7 @@ public static synchronized Singleton getInstanceII() {
 
 等待集的操作可以被线程的中断状态以及Thread类中处理中断的方法影响。此外，Thread类中用于休眠和加入其它线程的方法都拥有从等待和通知操作继承来的属性。
 
-### wait
+### 等待（Wait）
 
 等待动作的发生由对*wait()*方法，或者对带有时间参数的*wait(long millisecs)* 与*wait(long millisecs, int nanosecs)*方法的调用触发。用参数*0*调用*wait(long millisecs)*或者用参数*0， 0*调用*wait(long millisecs, int nanosecs)*与直接调用无参数的*wait()*方法等价。如果没有抛出*InterruptedException*异常，那么线程会从一个等待动作中正常返回。
 
