@@ -1,4 +1,4 @@
-# 清算系统
+# Settlement System
 
 ## 0x1 Background
 
@@ -44,8 +44,8 @@ We design and implemented several APIs to serve the settelement. Here is the fir
 | ---------------------------- | --------------------------------------- | ------ | -------- | -------- |
 | Create Report                | /settlement/dlc/report                  | POST   | Done     |          |
 | Query audit journal          | /settlement/dlc/journal/:kind/:id       | GET    | Done     |          |
-| Query Report (SPV to ZWJR)   | /settlement/dlc/report/:kind/in         | GET    | Done     |          |
-| Query Report (ZWJR to SPV)   | /settlement/dlc/report/:kind/out        | GET    | Done     |          |
+| Query Report (SPV to us)     | /settlement/dlc/report/:kind/in         | GET    | Done     |          |
+| Query Report (us to SPV)     | /settlement/dlc/report/:kind/out        | GET    | Done     |          |
 | Audit Report                 | /settlement/dlc/audit                   | POST   | Done     |          |
 | Export Excel (SPV to us)     | /settlement/dlc/report/:kind/in/export  | GET    | TBD      |          |
 | Export Excel (to SPV)        | /settlement/dlc/report/:kind/out/export | GET    | TBD      |          |
